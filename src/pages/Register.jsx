@@ -3,8 +3,7 @@ import { IoEyeOffOutline } from "react-icons/io5";
 import { IoEyeOutline } from "react-icons/io5";
 import { useFirebase } from "../context/firebase";
 import Lottie from "lottie-react";
-import loader from '../32QjdV3Pj8.json'
-
+import loader from "../32QjdV3Pj8.json";
 
 function Register() {
   const firebase = useFirebase();
@@ -12,7 +11,6 @@ function Register() {
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-
 
   // const handleSubmit = async (e) => {
   //   e.preventDefault();
@@ -29,39 +27,37 @@ function Register() {
   // };
 
   const handleSubmit = async (e) => {
-  e.preventDefault();
-  setLoading(true);
+    e.preventDefault();
+    setLoading(true);
 
-  try {
-    if (isLogin) {
+    try {
+      if (isLogin) {
+        await firebase.signinUserWithEmailAndPassword(
+          formData.email,
+          formData.password
+        );
+        console.log("User logged in successfully");
+      } else {
+        await firebase.signinUserWithEmailAndPassword(
+          formData.email,
+          formData.password
+        );
 
-      await firebase.signInUserWithEmailAndPassword(
-        formData.email,
-        formData.password
-      );
-      console.log("User logged in successfully");
-    } else {
+        console.log("User registered successfully");
+      }
 
-      await firebase.signupUserWithEmailAndPassword(
-        formData.email,
-        formData.password
-      );
-      console.log("User registered successfully");
+      setFormData({
+        name: "",
+        email: "",
+        password: "",
+      });
+    } catch (error) {
+      console.error("Error during auth:", error);
+      alert(error.message)
+    } finally {
+      setLoading(false);
     }
-
-
-    setFormData({
-      name: "",
-      email: "",
-      password: "",
-    });
-  } catch (error) {
-    console.error("Error during auth:", error.message);
-  } finally {
-    setLoading(false);
-  }
-};
-
+  };
 
   const [formData, setFormData] = useState({
     name: "",
@@ -170,15 +166,19 @@ function Register() {
           )}
 
           <button
-          disabled={loading}
+            disabled={loading}
             type="submit"
-            className={`w-full bg-blue-600 text-white py-2 cursor-pointer rounded-lg font-semibold hover:bg-blue-700 transition duration-300 ${loading ? "opacity-70 cursor-not-allowed" : "hover:bg-blue-700"}`}
+            className={`w-full bg-blue-600 text-white py-2 cursor-pointer rounded-lg font-semibold hover:bg-blue-700 transition duration-300 ${
+              loading ? "opacity-70 cursor-not-allowed" : "hover:bg-blue-700"
+            }`}
           >
             {loading ? (
-              <Lottie animationData={loader} loop={true} className="w-4 h-4"/>
-  ) : (
-    isLogin ? "Sign In" : "Create Account"
-  )}
+              <Lottie animationData={loader} loop={true} className="w-4 h-4" />
+            ) : isLogin ? (
+              "Sign In"
+            ) : (
+              "Create Account"
+            )}
           </button>
         </form>
 
