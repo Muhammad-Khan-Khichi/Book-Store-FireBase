@@ -1,22 +1,77 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { IoEyeOffOutline } from "react-icons/io5";
 import { IoEyeOutline } from "react-icons/io5";
+import { useFirebase } from "../context/firebase";
+import Lottie from "lottie-react";
+import loader from '../32QjdV3Pj8.json'
+
 
 function Register() {
+  const firebase = useFirebase();
+
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
 
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   setLoading(true)
+  //   await firebase.signupUserWithEmailAndPassword(
+  //     formData.email,
+  //     formData.password
+  //   );
+  //   setFormData({
+  //     name: "",
+  //     email: "",
+  //     password: "",
+  //   });
+  // };
+
+  const handleSubmit = async (e) => {
+  e.preventDefault();
+  setLoading(true);
+
+  try {
+    if (isLogin) {
+
+      await firebase.signInUserWithEmailAndPassword(
+        formData.email,
+        formData.password
+      );
+      console.log("User logged in successfully");
+    } else {
+
+      await firebase.signupUserWithEmailAndPassword(
+        formData.email,
+        formData.password
+      );
+      console.log("User registered successfully");
+    }
+
+
+    setFormData({
+      name: "",
+      email: "",
+      password: "",
+    });
+  } catch (error) {
+    console.error("Error during auth:", error.message);
+  } finally {
+    setLoading(false);
+  }
+};
+
+
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    password: "",
+  });
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
-
-  // const [formData, setFormData] = useState({
-  //   name: "",
-  //   email: "",
-  //   password: "",
-  //   confirmPassword: "",
-  // });
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
@@ -26,6 +81,29 @@ function Register() {
         </h2>
 
         <form onSubmit={handleSubmit} className="space-y-5">
+          {!isLogin && (
+            <div>
+              <label
+                htmlFor="name"
+                className="block text-sm font-medium text-gray-700 mb-1"
+              >
+                Full Name
+              </label>
+              <div className="relative">
+                <input
+                  value={formData.name}
+                  onChange={handleChange}
+                  type="text"
+                  id="name"
+                  name="name"
+                  placeholder="Enter your Name"
+                  required
+                  className="w-full  px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none transition duration-200"
+                />
+              </div>
+            </div>
+          )}
+
           <div>
             <label
               htmlFor="email"
@@ -34,6 +112,8 @@ function Register() {
               Email
             </label>
             <input
+              value={formData.email}
+              onChange={handleChange}
               type="email"
               id="email"
               name="email"
@@ -52,6 +132,8 @@ function Register() {
               Password
             </label>
             <input
+              value={formData.password}
+              onChange={handleChange}
               type={showPassword ? "text" : "password"}
               id="password"
               name="password"
@@ -71,35 +153,6 @@ function Register() {
               )}
             </button>
           </div>
-          {!isLogin && (
-            <div className="relative">
-              <label
-                htmlFor="password"
-                className="block text-sm font-medium text-gray-700 mb-1"
-              >
-                Confirm Password
-              </label>
-              <input
-                type={showPassword ? "text" : "password"}
-                id="password"
-                name="password"
-                placeholder="••••••••"
-                required
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none pr-10"
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword((prev) => !prev)}
-                className="absolute right-3 top-8 text-gray-500 hover:text-gray-700"
-              >
-                {showPassword ? (
-                  <IoEyeOffOutline size={20} />
-                ) : (
-                  <IoEyeOutline size={20} />
-                )}
-              </button>
-            </div>
-          )}
 
           {isLogin && (
             <div className="flex items-center justify-between">
@@ -117,10 +170,15 @@ function Register() {
           )}
 
           <button
+          disabled={loading}
             type="submit"
-            className="w-full bg-blue-600 text-white py-2 cursor-pointer rounded-lg font-semibold hover:bg-blue-700 transition duration-300"
+            className={`w-full bg-blue-600 text-white py-2 cursor-pointer rounded-lg font-semibold hover:bg-blue-700 transition duration-300 ${loading ? "opacity-70 cursor-not-allowed" : "hover:bg-blue-700"}`}
           >
-            {isLogin ? "Sign In" : "Create Account"}
+            {loading ? (
+              <Lottie animationData={loader} loop={true} className="w-4 h-4"/>
+  ) : (
+    isLogin ? "Sign In" : "Create Account"
+  )}
           </button>
         </form>
 
