@@ -1,17 +1,28 @@
-import React, { useState } from "react";
+import React, {  useState } from "react";
 import { IoEyeOffOutline } from "react-icons/io5";
 import { IoEyeOutline } from "react-icons/io5";
 import { useFirebase } from "../context/firebase";
 import Lottie from "lottie-react";
-import loader from "../32QjdV3Pj8.json";
+import loader from "../loader.json";
+import { FcGoogle } from "react-icons/fc";
+
+import { toast } from "react-toastify";
+// import { useNavigate } from "react-router-dom";
 
 function Register() {
   const firebase = useFirebase();
 
+  // const navigate = useNavigate()
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  // useEffect(() => {
+  //   if(firebase.isLoggedIn){
+  //     // navigate to home
+  //     navigate('/')
+  //   }
+  // }, [firebase, navigate])
   // const handleSubmit = async (e) => {
   //   e.preventDefault();
   //   setLoading(true)
@@ -36,14 +47,14 @@ function Register() {
           formData.email,
           formData.password
         );
-        console.log("User logged in successfully");
+        toast.success("Logged in successfully 🎉");
       } else {
         await firebase.signinUserWithEmailAndPassword(
           formData.email,
           formData.password
         );
 
-        console.log("User registered successfully");
+        toast.success("Account created successfully 🚀");
       }
 
       setFormData({
@@ -53,7 +64,7 @@ function Register() {
       });
     } catch (error) {
       console.error("Error during auth:", error);
-      alert(error.message)
+      toast.error(error.message || "Something went wrong ❌");
     } finally {
       setLoading(false);
     }
@@ -168,12 +179,16 @@ function Register() {
           <button
             disabled={loading}
             type="submit"
-            className={`w-full bg-blue-600 text-white py-2 cursor-pointer rounded-lg font-semibold hover:bg-blue-700 transition duration-300 ${
+            className={`w-full flex cursor-pointer items-center justify-center bg-blue-600 text-white py-2 rounded-lg font-semibold transition duration-300 ${
               loading ? "opacity-70 cursor-not-allowed" : "hover:bg-blue-700"
             }`}
           >
             {loading ? (
-              <Lottie animationData={loader} loop={true} className="w-4 h-4" />
+              <Lottie
+                animationData={loader}
+                loop
+                className="w-8 h-8" // Adjust size to fit the button height
+              />
             ) : isLogin ? (
               "Sign In"
             ) : (
@@ -181,6 +196,22 @@ function Register() {
             )}
           </button>
         </form>
+        {/* //hr line */}
+
+        <div className="flex items-center my-4">
+          <hr className="flex-grow border-gray-300" />
+          <span className="px-3 text-gray-500 text-sm">or</span>
+          <hr className="flex-grow border-gray-300" />
+        </div>
+
+        <button
+          onClick={firebase.signinWithGoogle}
+          type="button"
+          className="w-full cursor-pointer flex  items-center justify-center gap-3 border border-gray-300 bg-white text-gray-700 py-2 rounded-lg font-semibold shadow-sm hover:bg-gray-50 transition duration-300"
+        >
+          <FcGoogle size={22} />
+          <span>Continue with Google</span>
+        </button>
 
         <p className="text-center text-sm text-gray-600 mt-6">
           {isLogin ? "Don't have an account? " : "Already have an account? "}
