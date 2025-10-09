@@ -1,8 +1,9 @@
-import React, {  useState } from "react";
+import React, { useEffect, useState } from "react";
 import { IoEyeOffOutline } from "react-icons/io5";
 import { IoEyeOutline } from "react-icons/io5";
 import { useFirebase } from "../context/firebase";
 import Lottie from "lottie-react";
+import { useNavigate } from "react-router-dom";
 import loader from "../loader.json";
 import { FcGoogle } from "react-icons/fc";
 
@@ -12,17 +13,17 @@ import { toast } from "react-toastify";
 function Register() {
   const firebase = useFirebase();
 
-  // const navigate = useNavigate()
+  const navigate = useNavigate()
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  // useEffect(() => {
-  //   if(firebase.isLoggedIn){
-  //     // navigate to home
-  //     navigate('/')
-  //   }
-  // }, [firebase, navigate])
+  useEffect(() => {
+    if(firebase.isLoggedIn){
+      // navigate to home
+      navigate('/')
+    }
+  }, [firebase, navigate])
   // const handleSubmit = async (e) => {
   //   e.preventDefault();
   //   setLoading(true)
