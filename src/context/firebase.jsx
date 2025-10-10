@@ -8,7 +8,7 @@ import {
   signInWithPopup,
   onAuthStateChanged,
 } from "firebase/auth";
-import { getFirestore, collection, addDoc, getDoc } from "firebase/firestore";
+import { getFirestore, collection, addDoc, getDocs } from "firebase/firestore";
 import { Firestore } from "firebase/firestore";
 // import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
@@ -32,15 +32,14 @@ const firestore = getFirestore(app);
 export const useFirebase = () => useContext(FirebaseContext);
 
 export const FirebaseProvider = (props) => {
-
-  const [user, setUser] = useState(null)
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
-    onAuthStateChanged(firebaseAuth, user => {
-      if (user) setUser(user)
-      else setUser(null)
-    })
-  }, [] )
+    onAuthStateChanged(firebaseAuth, (user) => {
+      if (user) setUser(user);
+      else setUser(null);
+    });
+  }, []);
 
   const signupUserWithEmailAndPassword = (email, password) =>
     createUserWithEmailAndPassword(firebaseAuth, email, password);
@@ -50,28 +49,35 @@ export const FirebaseProvider = (props) => {
 
   const signinWithGoogle = () => signInWithPopup(firebaseAuth, googleProvider);
 
-  const handleCreateNewListing = async(title, isbn, price, author, imageUrl) => {
+  const handleCreateNewListing = async (
+    title,
+    isbn,
+    price,
+    author,
+    imageUrl
+  ) => {
     // const imageRef = ref(storage, `uploads/images${Date.now()}-${image.name}`)
     // const uploadResult = await uploadBytes(imageRef, image)
     // const imageURL = await getDownloadURL(uploadResult.ref);
-    return await addDoc(collection(firestore, 'books'), {
+    return await addDoc(collection(firestore, "books"), {
       title,
       isbn,
       price,
       author,
-      imageURL:imageUrl,
+      imageURL: imageUrl,
       userID: user.uid,
       userEmail: user.email,
-      displayName: user.displayName,
-      photoURL: user.photoURL
-    })
-  }
+      // displayName: user.displayName,
+    });
+  };
 
-  const listAllBooks = () => {
-    return getDoc(collection(firestore, 'books'))
-  }
+  const listAllBooks = async () => {
+    const booksCol = collection(firestore, "books");
+    const booksSnapshot = await getDocs(booksCol);
+    return booksSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+  };
 
-  const isLoggedIn = user ? true: false
+  const isLoggedIn = user ? true : false;
 
   return (
     <FirebaseContext.Provider

@@ -8,14 +8,17 @@ import Layout from "./Layout.jsx";
 import Home from "./components/Home.jsx";
 import Register from "./pages/Register.jsx";
 import AddBook from "./pages/AddBook.jsx";
+import ShowBooks from "./pages/ShowBooks.jsx";
 
 
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path='/' element={<Layout />}>
-      <Route path='' element={<Home />} />
+      <Route path='' element={<ShowBooks/>} />
+      {/* <Route path='' element={<Home />} /> */}
       <Route path='/login' element={<Register/>} />
       <Route path='/addListing' element={<AddBook/>} />
+
     </Route>
   )
 )
