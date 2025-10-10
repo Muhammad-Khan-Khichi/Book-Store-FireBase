@@ -7,9 +7,11 @@ import {
   GoogleAuthProvider,
   signInWithPopup,
   onAuthStateChanged,
+  signOut 
 } from "firebase/auth";
 import { getFirestore, collection, addDoc, getDocs } from "firebase/firestore";
-import { Firestore } from "firebase/firestore";
+// import { Firestore } from "firebase/firestore";
+// import { useNavigate } from "react-router-dom";
 // import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 const FirebaseContext = createContext(null);
@@ -41,6 +43,8 @@ export const FirebaseProvider = (props) => {
     });
   }, []);
 
+  // const navigate = useNavigate()
+
   const signupUserWithEmailAndPassword = (email, password) =>
     createUserWithEmailAndPassword(firebaseAuth, email, password);
 
@@ -49,6 +53,10 @@ export const FirebaseProvider = (props) => {
 
   const signinWithGoogle = () => signInWithPopup(firebaseAuth, googleProvider);
 
+  const handleLogOut = async () =>{
+    await signOut(firebaseAuth)
+    // navigate("/login")
+  } 
   const handleCreateNewListing = async (
     title,
     isbn,
@@ -88,6 +96,7 @@ export const FirebaseProvider = (props) => {
         handleCreateNewListing,
         listAllBooks,
         isLoggedIn,
+        handleLogOut
       }}
     >
       {props.children}
