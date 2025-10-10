@@ -7,6 +7,7 @@ import { Route, createBrowserRouter, RouterProvider, createRoutesFromElements  }
 import Layout from "./Layout.jsx";
 import Home from "./components/Home.jsx";
 import Register from "./pages/Register.jsx";
+import AddBook from "./pages/AddBook.jsx";
 
 
 const router = createBrowserRouter(
@@ -14,6 +15,7 @@ const router = createBrowserRouter(
     <Route path='/' element={<Layout />}>
       <Route path='' element={<Home />} />
       <Route path='/login' element={<Register/>} />
+      <Route path='/addListing' element={<AddBook/>} />
     </Route>
   )
 )
