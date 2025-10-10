@@ -9,7 +9,7 @@ const Navbar = () => {
     <header className="shadow sticky z-50 top-0 bg-white">
       <nav className="border-gray-200 px-4 lg:px-6 py-2.5">
         <div className="flex flex-wrap justify-between items-center mx-auto max-w-screen-xl">
-          {/* Logo */}
+
           <Link to="/" className="flex items-center">
             <img
               src="https://alexharkness.com/wp-content/uploads/2020/06/logo-2.png"
@@ -18,7 +18,6 @@ const Navbar = () => {
             />
           </Link>
 
-          {/* Navigation links (visible on large screens) */}
           <ul className="hidden lg:flex space-x-8 font-medium">
             {[{ name: "Home", path: "/" },
               { name: "Add Listing", path: "/addListing" },
@@ -39,7 +38,7 @@ const Navbar = () => {
             ))}
           </ul>
 
-          {/* Right side buttons */}
+
           <div className="flex items-center lg:order-2">
             <Link
               to="/login"
@@ -54,7 +53,7 @@ const Navbar = () => {
               Get started
             </Link>
 
-            {/* Mobile menu toggle */}
+
             <button
               onClick={() => setMenuOpen(!menuOpen)}
               className="lg:hidden text-gray-700 focus:outline-none ml-2 z-50 relative"
@@ -64,7 +63,6 @@ const Navbar = () => {
           </div>
         </div>
 
-        {/* Sliding Mobile Menu (from right) */}
         <div
           className={`fixed top-0 right-0 h-full w-64 bg-white shadow-lg transform transition-transform duration-300 ease-in-out z-40 ${
             menuOpen ? "translate-x-0" : "translate-x-full"
@@ -90,7 +88,7 @@ const Navbar = () => {
               </li>
             ))}
 
-            {/* Mobile Login + Register */}
+
             <li className="mt-4">
               <Link
                 to="/login"

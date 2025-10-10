@@ -8,7 +8,7 @@ import loader from "../loader.json";
 import { FcGoogle } from "react-icons/fc";
 
 import { toast } from "react-toastify";
-// import { useNavigate } from "react-router-dom";
+
 
 function Register() {
   const firebase = useFirebase();
@@ -20,7 +20,6 @@ function Register() {
 
   useEffect(() => {
     if(firebase.isLoggedIn){
-      // navigate to home
       navigate('/')
     }
   }, [firebase, navigate])

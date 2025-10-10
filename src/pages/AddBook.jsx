@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useFirebase } from "../context/firebase";
 
 const AddBook = () => {
   const [bookData, setBookData] = useState({
@@ -9,6 +10,9 @@ const AddBook = () => {
     image: null,
   });
 
+  const firebase = useFirebase();
+
+  const [loading, setLoading] = useState(false);
   const [preview, setPreview] = useState(null);
 
   const handleChange = (e) => {
@@ -24,10 +28,31 @@ const AddBook = () => {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
+
+    const { title, isbn, price, author, image } = bookData;
+
+
+    const formData = new FormData();
+    formData.append("key", "794729bf2d4fc86327d22d427cbde247"); 
+    formData.append("image", image);
+
+    const res = await fetch("https://api.imgbb.com/1/upload", {
+      method: "POST",
+      body: formData,
+    });
+
+    const data = await res.json();
+    console.log(("img res", data));
+    
+
+    const imageUrl = data.data.url;
+
+    await firebase.handleCreateNewListing(title, isbn, price, author, imageUrl);
     console.log("Book Added:", bookData);
-    alert(`📚 Book "${bookData.title}" added successfully!`);
+
     setBookData({
       title: "",
       isbn: "",
@@ -36,6 +61,7 @@ const AddBook = () => {
       image: null,
     });
     setPreview(null);
+    setLoading(false);
   };
 
   return (
@@ -46,7 +72,6 @@ const AddBook = () => {
         </h2>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Book Title */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Book Title
@@ -62,7 +87,6 @@ const AddBook = () => {
             />
           </div>
 
-          {/* ISBN */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               ISBN Number
@@ -78,7 +102,6 @@ const AddBook = () => {
             />
           </div>
 
-          {/* Price */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Price ($)
@@ -95,7 +118,6 @@ const AddBook = () => {
             />
           </div>
 
-          {/* Author */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Author
@@ -111,59 +133,61 @@ const AddBook = () => {
             />
           </div>
 
-{/* Image Upload */}
-<div>
-  <label className="block text-sm font-medium text-gray-700 mb-2">
-    Book Cover
-  </label>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Book Cover
+            </label>
 
-  <div className="flex items-center gap-4">
-    <label
-      htmlFor="file-upload"
-      className="cursor-pointer inline-flex items-center px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg shadow hover:bg-indigo-700 transition duration-200"
-    >
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        className="h-5 w-5 mr-2"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke="currentColor"
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth={2}
-          d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M12 12V4m0 0l-3 3m3-3l3 3"
-        />
-      </svg>
-      Upload Image
-    </label>
+            <div className="flex items-center gap-4">
+              <label
+                htmlFor="file-upload"
+                className="cursor-pointer inline-flex items-center px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg shadow hover:bg-indigo-700 transition duration-200"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5 mr-2"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M12 12V4m0 0l-3 3m3-3l3 3"
+                  />
+                </svg>
+                Upload Image
+              </label>
 
-    <input
-      id="file-upload"
-      type="file"
-      accept="image/*"
-      onChange={handleImageChange}
-      className="hidden"
-    />
+              <input
+                id="file-upload"
+                type="file"
+                accept="image/*"
+                onChange={handleImageChange}
+                className="hidden"
+              />
 
-    {preview && (
-      <img
-        src={preview}
-        alt="Preview"
-        className="w-24 h-32 object-cover rounded-lg shadow border border-gray-200"
-      />
-    )}
-  </div>
-</div>
+              {preview && (
+                <img
+                  src={preview}
+                  alt="Preview"
+                  className="w-24 h-32 object-cover rounded-lg shadow border border-gray-200"
+                />
+              )}
+            </div>
+          </div>
 
-
-          {/* Submit Button */}
           <button
             type="submit"
-            className="w-full bg-blue-600 text-white py-2 rounded-lg font-semibold hover:bg-blue-700 transition duration-300"
+            disabled={loading}
+            className={`w-full py-2 rounded-lg font-semibold text-white transition duration-300 ${
+              loading
+                ? "bg-blue-400 cursor-not-allowed"
+                : "bg-blue-600 hover:bg-blue-700"
+            }`}
           >
-            Add Book
+             {loading ? "Adding..." : "Add Book"}
           </button>
         </form>
       </div>
